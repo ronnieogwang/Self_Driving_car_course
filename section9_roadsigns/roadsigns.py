@@ -103,12 +103,16 @@ y_test = to_categorical(y_test, 43)
 y_val = to_categorical(y_val, 43)
 
 #create model
-def lenet_model():
+def modified_model():
     model = Sequential()
     model.add(Conv2D(60, (5,5), input_shape= (32,32,1), activation = 'relu'))
+    model.add(Conv2D(60, (5,5), activation = 'relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
+    
+    model.add(Conv2D(30, (3,3), activation = 'relu'))
     model.add(Conv2D(30, (3,3), activation = 'relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
+    
     model.add(Flatten())
     model.add(Dense(500,activation = 'relu'))
     model.add(Dropout(0.5))
@@ -116,8 +120,8 @@ def lenet_model():
     model.compile(Adam(lr =0.001), loss = 'categorical_crossentropy', metrics = ['accuracy'])
     return model
 
-model = lenet_model()
-#print(model.summary())
+model = modified_model()
+print(model.summary())
 
 h = model.fit(X_train, y_train, epochs = 10, validation_data=(X_val, y_val), batch_size= 400, verbose = 1, shuffle = 1)
 
@@ -148,6 +152,14 @@ plt.legend(['accuracy', 'val_accuracy'])
   
 2. Increase number of filters form 30 to 60 and 15 to 30
     Accuracy increase to 98.08
+    
+3. Move from le_net by adding two extra convolution layers
+    This reduces number of parameters since the additional conv 
+    layers reduce image size.
+    
+4. Add a dropout layer after second pooling.
+    This removes overfitting
+
 
 
 '''
