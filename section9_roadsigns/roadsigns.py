@@ -37,7 +37,7 @@ num_of_samples = []
  
 cols = 5
 num_classes = 43
- 
+'''
 fig, axs = plt.subplots(nrows=num_classes, ncols = cols, figsize=(5, 50))
 fig.tight_layout()
 for i in range(cols):
@@ -56,31 +56,32 @@ plt.bar(range(0, num_classes), num_of_samples)
 plt.title("Distribution of the training dataset")
 plt.xlabel("Class number")
 plt.ylabel("Number of images")
-
+'''
 import cv2
+'''
 plt.imshow(X_train[1000])
 plt.axis("off")
 print(X_train[1000].shape)
 print(y_train[1000])
-
+'''
 def grayscale(img):
   img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
   return img
-
+'''
 img = grayscale(X_train[1000])
 plt.imshow(img, cmap=plt.get_cmap('gray'))
 plt.axis("off")
 print(img.shape)
-
+'''
 #intensity eqalisation
 def equalize(img):
   img = cv2.equalizeHist(img)
   return img
-
+'''
 img = equalize(img)
 plt.imshow(img, cmap=plt.get_cmap('gray'))
 plt.axis("off")
-
+'''
 def preprocessing(img):
   img = grayscale(img)
   img = equalize(img)
@@ -104,22 +105,27 @@ y_val = to_categorical(y_val, 43)
 #create model
 def lenet_model():
     model = Sequential()
-    model.add(Conv2D(30, (5,5), input_shape= (32,32,1), activation = 'relu'))
+    model.add(Conv2D(60, (5,5), input_shape= (32,32,1), activation = 'relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
-    model.add(Conv2D(15, (3,3), activation = 'relu'))
+    model.add(Conv2D(30, (3,3), activation = 'relu'))
     model.add(MaxPooling2D(pool_size=(2,2)))
     model.add(Flatten())
     model.add(Dense(500,activation = 'relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation = 'softmax'))
-    model.compile(Adam(lr =0.01), loss = 'categorical_crossentropy', metrics = ['accuracy'])
+    model.compile(Adam(lr =0.001), loss = 'categorical_crossentropy', metrics = ['accuracy'])
     return model
 
 model = lenet_model()
-print(model.summary())
+#print(model.summary())
 
 h = model.fit(X_train, y_train, epochs = 10, validation_data=(X_val, y_val), batch_size= 400, verbose = 1, shuffle = 1)
 
+score = model.evaluate(X_test, y_test, verbose = 0)
+print("Test score: ", score[0])
+print("Test score: ", score[1])
+
+'''
 plt.plot(h.history['loss'])
 plt.plot(h.history['val_loss'])
 plt.xlabel('epoch')
@@ -132,8 +138,19 @@ plt.plot(h.history['val_accuracy'])
 plt.xlabel('epoch')
 plt.ylabel('accuracy')
 plt.legend(['accuracy', 'val_accuracy'])
-
+'''
 #fine tuning
-'accuracy'
+'''
+*accuracy*
+1. reduce the learning rate from 0.01  to 0.001 
+  The accuracy increased from 90% to 96.7%
+  But accuracy fell to 0.7399 with 0.0001
+  
+2. Increase number of filters form 30 to 60 and 15 to 30
+    Accuracy increase to 98.08
+
+
+'''
+  
 
 
