@@ -101,3 +101,39 @@ y_train = to_categorical(y_train, 43)
 y_test = to_categorical(y_test, 43)
 y_val = to_categorical(y_val, 43)
 
+#create model
+def lenet_model():
+    model = Sequential()
+    model.add(Conv2D(30, (5,5), input_shape= (32,32,1), activation = 'relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(Conv2D(15, (3,3), activation = 'relu'))
+    model.add(MaxPooling2D(pool_size=(2,2)))
+    model.add(Flatten())
+    model.add(Dense(500,activation = 'relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(num_classes, activation = 'softmax'))
+    model.compile(Adam(lr =0.01), loss = 'categorical_crossentropy', metrics = ['accuracy'])
+    return model
+
+model = lenet_model()
+print(model.summary())
+
+h = model.fit(X_train, y_train, epochs = 10, validation_data=(X_val, y_val), batch_size= 400, verbose = 1, shuffle = 1)
+
+plt.plot(h.history['loss'])
+plt.plot(h.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['loss', 'val_loss'])
+
+
+plt.plot(h.history['accuracy'])
+plt.plot(h.history['val_accuracy'])
+plt.xlabel('epoch')
+plt.ylabel('accuracy')
+plt.legend(['accuracy', 'val_accuracy'])
+
+#fine tuning
+'accuracy'
+
+
