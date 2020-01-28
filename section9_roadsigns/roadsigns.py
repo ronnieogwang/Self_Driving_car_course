@@ -97,6 +97,18 @@ X_train = X_train.reshape(34799, 32, 32,1)
 X_test = X_test.reshape(12630, 32, 32,1)
 X_val = X_val.reshape(4410, 32, 32,1)
 
+#augment
+from keras.preprocessing.image import ImageDataGenerator
+datagen = ImageDataGenerator(width_shift_range = 0.1,
+                   height_shift_range = 0.1,
+                   zoom_range = 0.2,
+                   shear_range = 0.1,
+                   rotation_range = 10,)
+
+datagen.fit(X_train)
+datagen.flow(X_train, y_train, batch_size = 20)
+
+
 #onehotencode labels
 y_train = to_categorical(y_train, 43)
 y_test = to_categorical(y_test, 43)
@@ -123,7 +135,7 @@ def modified_model():
 model = modified_model()
 print(model.summary())
 
-h = model.fit(X_train, y_train, epochs = 10, validation_data=(X_val, y_val), batch_size= 400, verbose = 1, shuffle = 1)
+h = model.fit_generator(datagen.flow(X_train, y_train, batch_size= 50), steps_per_epochs = 2000,epochs = 10,  validation_data=(X_val, y_val), shuffle = 1)
 
 score = model.evaluate(X_test, y_test, verbose = 0)
 print("Test score: ", score[0])
@@ -143,6 +155,30 @@ plt.xlabel('epoch')
 plt.ylabel('accuracy')
 plt.legend(['accuracy', 'val_accuracy'])
 '''
+#fetch image
+ 
+import requests
+from PIL import Image
+url = 'https://c8.alamy.com/comp/J2MRAJ/german-road-sign-bicycles-crossing-J2MRAJ.jpg'
+r = requests.get(url, stream=True)
+img = Image.open(r.raw)
+plt.imshow(img, cmap=plt.get_cmap('gray'))
+ 
+ 
+#Preprocess image
+ 
+img = np.asarray(img)
+img = cv2.resize(img, (32, 32))
+img = preprocessing(img)
+plt.imshow(img, cmap = plt.get_cmap('gray'))
+print(img.shape)
+ 
+#Reshape reshape
+ 
+img = img.reshape(1, 32, 32, 1)
+ 
+#Test image
+print("predicted sign: "+ str(model.predict_classes(img)))
 #fine tuning
 '''
 *accuracy*
