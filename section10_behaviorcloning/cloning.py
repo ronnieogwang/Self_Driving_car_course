@@ -99,3 +99,35 @@ axs[0].imshow(original_image)
 axs[0].set_title('Original Image')
 axs[1].imshow(preprocessed_image)
 axs[1].set_title('Preprocessed Image')
+
+#creating the invidia model
+def nvidia_model():
+    model = Sequential()
+    model.add(Convolution2D(24, 5, 5, subsample = (2,2), input_shape = (200, 66, 3), activation = 'relu'))
+    model.add(Convolution2D(36, 5, 5, subsample=(2, 2), activation='relu'))
+    model.add(Convolution2D(48, 5, 5, subsample=(2, 2), activation='relu'))
+    model.add(Convolution2D(64, 3, 3, activation='relu'))
+    model.add(Convolution2D(64, 3, 3, activation='relu'))
+    model.add(Dropout(0.5))
+    
+    model.add(Flatten())
+    model.add(Dense(100, activation = 'relu'))
+    model.add(Dropout(0.5))
+    
+    model.add(Dense(50, activation = 'relu'))
+    model.add(Dense(10, activation = 'relu'))
+    model.add(Dense(1))
+    model.compile(Adam(lr = 0.001), loss = 'mse')
+    return model
+    
+model = nvidia_model()
+print(model.summary())
+
+h = model.fit(X_train, y_train, epochs = 30, validation_data = (X_test, y_test), batch_size = 100, verbose = 1, shuffle = 1)
+
+    
+    
+    
+    
+    
+    
